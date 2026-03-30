@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kokomori - Diario</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FDF8F4;
+      --surface: #FFFFFF;
+      --text: #2C2420;
+      --c5: #4281A4;
+      --border: rgba(226,180,160,0.3);
+    }
+
+    body { 
+      margin: 0; 
+      background: #eee; 
+      font-family: 'DM Sans', sans-serif; 
+      display: flex; 
+      justify-content: center; 
+    }
+
+    #app { 
+      width: 100%; 
+      max-width: 400px; 
+      background: var(--bg); 
+      min-height: 100vh; 
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header { 
+      padding: 1rem; 
+      background: var(--surface); 
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-month {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .month-name { 
+      font-size: 1.4rem; 
+      font-weight: 600; 
+      text-transform: capitalize; 
+    }
+
+    .arrow { 
+      cursor: pointer; 
+      padding: 10px; 
+      color: var(--c5); 
+      font-weight: bold; 
+    }
+
+    .grid-container { padding: 0 1rem; }
+    
+    .calendar-grid { 
+      display: grid; 
+      grid-template-columns: repeat(7, 1fr); 
+      gap: 8px; 
+      background: var(--surface); 
+      padding: 1rem; 
+      border-radius: 20px;
+    }
+
+    .day { 
+      aspect-ratio: 1/1; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 0.9rem; 
+      border-radius: 10px; 
+      cursor: pointer;
+      background: var(--bg);
+    }
+
+    /* Colores según sentimiento */
+    .day.Bien { background: #EAD2AC; }
+    .day.Tranquilo { background: #9CAFB7; color: white; }
+    .day.Triste { background: #4281A4; color: white; }
+    .day.Ansioso { background: #E6B89C; color: white; }
+    .day.Enojado { background: #FE938C; color: white; }
+
+    /* MODAL INFERIOR */
+    .sheet {
+      position: fixed; bottom: 0; width: 100%; max-width: 400px;
+      background: white; padding: 2rem 1.5rem; border-radius: 25px 25px 0 0;
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.1); display: none; z-index: 100;
+      box-sizing: border-box;
+    }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 90; }
+
+    .mood-row { display: flex; justify-content: space-between; margin: 1.5rem 0; }
+    
+    .dot { 
+      width: 44px; 
+      height: 44px; 
+      border-radius: 12px; 
+      cursor: pointer; 
+      border: 3px solid transparent; /* Espacio para el borde de selección */
+      transition: all 0.2s ease;
+    }
+
+    /* ESTADO SELECCIONADO */
+    .dot.selected {
+      border-color: #2C2420; 
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; box-sizing: border-box; font-size: 16px; }
+    .btn-save { width: 100%; background: var(--c5); color: white; border: none; padding: 15px; border-radius: 12px; margin-top: 12px; font-weight: 600; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="header">
+    <span onclick="location.href='index.html'" style="cursor:pointer; color:var(--c5)">⬅ Volver</span>
+    <b style="color:var(--text)">KOKOMORI</b>
+    <span></span>
+  </div>
+
+  <div class="nav-month">
+    <div class="arrow" onclick="moveMonth(-1)">❮</div>
+    <div class="month-name" id="labelMes">Marzo</div>
+    <div class="arrow" onclick="moveMonth(1)">❯</div>
+  </div>
+
+  <div class="grid-container">
+    <div class="calendar-grid" id="grid"></div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closeSheet()"></div>
+  <div class="sheet" id="sheet">
+    <div style="font-weight: 600; font-size: 1.1rem;">¿Cómo te sientes?</div>
+    
+    <div class="mood-row">
+      <div class="dot" style="background:#EAD2AC" onclick="selectMood('Bien', this)"></div>
+      <div class="dot" style="background:#9CAFB7" onclick="selectMood('Tranquilo', this)"></div>
+      <div class="dot" style="background:#4281A4" onclick="selectMood('Triste', this)"></div>
+      <div class="dot" style="background:#E6B89C" onclick="selectMood('Ansioso', this)"></div>
+      <div class="dot" style="background:#FE938C" onclick="selectMood('Enojado', this)"></div>
+    </div>
+
+    <textarea id="note" rows="3" placeholder="Escribe un pensamiento breve..."></textarea>
+    <button class="btn-save" onclick="save()">Guardar Registro</button>
+  </div>
+</div>
+
+<script>
+  let date = new Date();
+  let selectedKey = "";
+  let mood = "";
+
+  function render() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = "";
+    const y = date.getFullYear();
+    const m = date.getMonth();
+    
+    document.getElementById('labelMes').innerText = date.toLocaleString('es', {month:'long', year:'numeric'});
+
+    const first = new Date(y, m, 1).getDay();
+    const last = new Date(y, m + 1, 0).getDate();
+
+    for(let i=0; i<first; i++) grid.innerHTML += `<div></div>`;
+
+    for(let i=1; i<=last; i++) {
+      const key = `koko-${y}-${m}-${i}`;
+      const data = JSON.parse(localStorage.getItem(key) || "{}");
+      const d = document.createElement('div');
+      d.className = `day ${data.mood || ''}`;
+      d.innerText = i;
+      d.onclick = () => {
+        selectedKey = key;
+        mood = data.mood || ""; // Restaurar sentimiento si ya existía
+        document.getElementById('note').value = data.note || "";
+        
+        // Limpiar selecciones previas al abrir
+        document.querySelectorAll('.dot').forEach(dot => dot.classList.remove('selected'));
+        // Si ya tenía un mood, marcarlo como seleccionado
+        if(mood) {
+            const dots = document.querySelectorAll('.dot');
+            const indexMap = {'Bien':0, 'Tranquilo':1, 'Triste':2, 'Ansioso':3, 'Enojado':4};
+            if(dots[indexMap[mood]]) dots[indexMap[mood]].classList.add('selected');
+        }
+
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('sheet').style.display = 'block';
+      };
+      grid.appendChild(d);
+    }
+  }
+
+  function moveMonth(n) { date.setMonth(date.getMonth() + n); render(); }
+
+  // Función corregida para feedback visual
+  function selectMood(m, elemento) { 
+    mood = m; 
+    document.querySelectorAll('.dot').forEach(d => d.classList.remove('selected'));
+    elemento.classList.add('selected');
+  }
+
+  function closeSheet() { 
+    document.getElementById('overlay').style.display='none'; 
+    document.getElementById('sheet').style.display='none'; 
+  }
+  
+  function save() {
+    if(!mood) { alert("Por favor selecciona un color"); return; }
+    const note = document.getElementById('note').value;
+    localStorage.setItem(selectedKey, JSON.stringify({mood, note}));
+    closeSheet();
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>
