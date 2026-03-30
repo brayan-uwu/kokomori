@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FDF8F4;
+  --surface:#FFFFFF;
+  --surface2:#FAF3EE;
+  --c1:#FE938C;
+  --c2:#E6B89C;
+  --c3:#EAD2AC;
+  --c4:#9CAFB7;
+  --c5:#4281A4;
+  --text:#2C2420;
+  --text2:#7A5F55;
+  --border:rgba(226,180,160,0.3);
+  --shadow:0 2px 12px rgba(66,129,164,0.08);
+}
+[data-theme="dark"]{
+  --bg:#1a1614;
+  --surface:#231e1b;
+  --surface2:#2e2723;
+  --c1:#FE938C;
+  --c2:#E6B89C;
+  --c3:#EAD2AC;
+  --c4:#9CAFB7;
+  --c5:#4281A4;
+  --text:#F5EDE8;
+  --text2:#B89A8E;
+  --border:rgba(167,139,120,0.2);
+  --shadow:0 2px 12px rgba(0,0,0,0.3);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+#app{display:flex;flex-direction:column;min-height:100vh;max-width:430px;margin:0 auto}
+.screen{display:none;flex-direction:column;flex:1;animation:fadeUp .3s ease}
+.screen.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* LOGIN */
+#loginScreen{justify-content:center;align-items:center;min-height:100vh;padding:2rem;background:var(--bg)}
+.login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2.5rem 2rem;box-shadow:var(--shadow)}
+.brand{text-align:center;margin-bottom:2.5rem}
+.brand-name{font-family:'DM Serif Display',serif;font-size:2.6rem;color:var(--c5);letter-spacing:-.02em}
+.brand-line{width:40px;height:3px;background:var(--c1);border-radius:2px;margin:.6rem auto}
+.brand-sub{font-size:.8rem;color:var(--text2);letter-spacing:.08em;text-transform:uppercase}
+.login-label{font-size:.72rem;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem;display:block}
+.user-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1.5rem}
+.user-btn{background:var(--surface2);border:2px solid var(--border);border-radius:16px;padding:1rem .75rem;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:.5rem;color:var(--text)}
+.user-btn:hover{border-color:var(--c4);transform:translateY(-2px)}
+.user-btn.selected{border-color:var(--c5);background:rgba(66,129,164,.08)}
+.u-avatar{width:48px;height:48px;border-radius:50%;overflow:hidden;background:var(--surface2);display:flex;align-items:center;justify-content:center;border:2px solid var(--border)}
+.u-avatar img{width:100%;height:100%;object-fit:cover}
+.u-avatar-initials{font-size:1.1rem;font-weight:600;color:var(--c5)}
+.u-name{font-size:.82rem;font-weight:600}
+.u-role{font-size:.68rem;color:var(--text2)}
+.btn-primary{width:100%;padding:1rem;background:var(--c5);border:none;border-radius:14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.02em}
+.btn-primary:hover{background:var(--c4);transform:translateY(-1px);box-shadow:0 6px 20px rgba(66,129,164,.3)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-brand{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--c5)}
+.topbar-right{display:flex;align-items:center;gap:.6rem}
+.theme-toggle{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.4rem .75rem;cursor:pointer;font-size:.75rem;color:var(--text2);transition:all .2s}
+.theme-toggle:hover{border-color:var(--c4)}
+.topbar-user{display:flex;align-items:center;gap:.5rem;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.3rem .6rem .3rem .3rem;cursor:pointer;font-size:.8rem;transition:all .2s}
+.topbar-user:hover{border-color:var(--c4)}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;overflow:hidden;background:var(--c3);display:flex;align-items:center;justify-content:center}
+.topbar-avatar img{width:100%;height:100%;object-fit:cover}
+.plan-badge{font-size:.6rem;padding:.15rem .4rem;border-radius:6px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.plan-semilla{background:rgba(154,207,183,.2);color:#2E7D5E}
+.plan-brote{background:rgba(156,175,183,.2);color:#2E5A6E}
+.plan-raiz{background:rgba(254,147,140,.2);color:#9B3A35}
+[data-theme="dark"] .plan-semilla{background:rgba(154,207,183,.15);color:#7DD4B2}
+[data-theme="dark"] .plan-brote{background:rgba(156,175,183,.15);color:#9CAFB7}
+[data-theme="dark"] .plan-raiz{background:rgba(254,147,140,.15);color:#FE938C}
+
+/* BOTTOM NAV */
+.bottom-nav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding:.5rem 0;position:sticky;bottom:0;z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.5rem;cursor:pointer;color:var(--text2);font-size:.62rem;font-weight:500;transition:color .2s;border:none;background:none;font-family:'DM Sans',sans-serif;letter-spacing:.03em;text-transform:uppercase}
+.nav-item.active{color:var(--c5)}
+.nav-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.nav-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:1.25rem}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:1.25rem;box-shadow:var(--shadow)}
+.card-sm{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem}
+
+/* SECTION TITLE */
+.sec-title{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--text);margin-bottom:.85rem}
+
+/* HOME */
+.greeting-card{background:linear-gradient(135deg,var(--c3) 0%,var(--c2) 100%);border-radius:20px;padding:1.5rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.greeting-card::after{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.15)}
+.greeting-name{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--text);margin-bottom:.2rem}
+.greeting-sub{font-size:.85rem;color:var(--text2)}
+.mood-row{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+.mood-chip{background:rgba(255,255,255,.5);border:1.5px solid rgba(255,255,255,.6);border-radius:20px;padding:.35rem .8rem;font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;color:var(--text)}
+.mood-chip:hover,.mood-chip.selected{background:var(--surface);border-color:var(--c5);color:var(--c5)}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem}
+.quick-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:1.15rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.quick-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--c4)}
+.qc-icon{width:36px;height:36px;border-radius:10px;margin-bottom:.65rem;display:flex;align-items:center;justify-content:center}
+.qc-icon svg{width:20px;height:20px;stroke-width:1.8}
+.qc-icon.coral{background:rgba(254,147,140,.15)}
+.qc-icon.coral svg{stroke:var(--c1)}
+.qc-icon.blue{background:rgba(66,129,164,.12)}
+.qc-icon.blue svg{stroke:var(--c5)}
+.qc-icon.sand{background:rgba(234,210,172,.3)}
+.qc-icon.sand svg{stroke:#8B6E3A}
+.qc-icon.teal{background:rgba(156,175,183,.2)}
+.qc-icon.teal svg{stroke:var(--c4)}
+.qc-title{font-size:.88rem;font-weight:600;margin-bottom:.15rem;color:var(--text)}
+.qc-sub{font-size:.72rem;color:var(--text2)}
+.locked-overlay{position:absolute;inset:0;background:rgba(var(--bg-rgb, 253,248,244),.85);display:none;flex-direction:column;align-items:center;justify-content:center;border-radius:16px;gap:.3rem;backdrop-filter:blur(3px)}
+.locked-overlay.show{display:flex}
+.lock-svg{width:20px;height:20px;stroke:var(--text2);fill:none;stroke-width:1.8}
+.locked-text{font-size:.68rem;color:var(--text2);font-weight:500}
+
+/* DIARIO */
+.textarea-wrap{background:var(--surface2);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1rem;transition:border-color .2s}
+.textarea-wrap:focus-within{border-color:var(--c4)}
+textarea{width:100%;background:transparent;border:none;padding:1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;resize:none;outline:none;min-height:110px}
+textarea::placeholder{color:var(--text2)}
+.textarea-footer{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;border-top:1px solid var(--border)}
+.mood-icons{display:flex;gap:.3rem}
+.mood-pick{background:var(--surface);border:1px solid var(--border);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:all .2s}
+.mood-pick:hover,.mood-pick.active{border-color:var(--c1);background:rgba(254,147,140,.1)}
+.btn-sm{background:var(--c5);border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;padding:.5rem 1rem;cursor:pointer;transition:all .2s}
+.btn-sm:hover{background:var(--c4)}
+.entries-list{display:flex;flex-direction:column;gap:.75rem}
+.entry-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem;position:relative;border-left:3px solid var(--c1)}
+.entry-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.entry-date{font-size:.7rem;color:var(--text2);margin-left:auto}
+.entry-text{font-size:.875rem;line-height:1.6;color:var(--text)}
+.entry-mood-label{font-size:.7rem;font-weight:600;padding:.2rem .5rem;border-radius:6px;background:rgba(254,147,140,.1);color:var(--c1)}
+.delete-btn{background:none;border:none;cursor:pointer;color:var(--text2);line-height:1;padding:.2rem;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all .2s}
+.delete-btn:hover{color:#E24B4A;background:rgba(226,75,74,.08)}
+.delete-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.empty-state{text-align:center;color:var(--text2);padding:3rem 1rem;font-size:.875rem}
+.empty-icon{width:48px;height:48px;margin:0 auto .75rem;opacity:.3}
+.empty-icon svg{width:100%;height:100%;stroke:var(--text2);fill:none;stroke-width:1.5}
+
+/* CHAT */
+.chat-list{display:flex;flex-direction:column;gap:.6rem}
+.chat-item{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:.9rem 1rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.75rem}
+.chat-item:hover{border-color:var(--c4);transform:translateX(3px)}
+.chat-av{width:44px;height:44px;border-radius:50%;overflow:hidden;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid var(--border)}
+.chat-av img{width:100%;height:100%;object-fit:cover}
+.chat-av-init{font-size:.95rem;font-weight:700;color:var(--c5)}
+.chat-info{flex:1;min-width:0}
+.chat-name{font-weight:600;font-size:.88rem;margin-bottom:.15rem;color:var(--text)}
+.chat-preview{font-size:.75rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-time{font-size:.65rem;color:var(--text2);flex-shrink:0}
+#chatWindow{display:none;flex-direction:column;flex:1}
+#chatWindow.open{display:flex}
+.chat-header{display:flex;align-items:center;gap:.75rem;padding:.9rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border)}
+.back-btn{background:none;border:none;cursor:pointer;color:var(--text);padding:.2rem;display:flex;align-items:center}
+.back-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.chat-header-info{flex:1}
+.chat-header-name{font-weight:600;font-size:.9rem;color:var(--text)}
+.online-dot{font-size:.72rem;color:#2E7D5E;display:flex;align-items:center;gap:.3rem}
+.dot-live{width:6px;height:6px;background:#2E7D5E;border-radius:50%;display:inline-block}
+.chat-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.6rem}
+.msg{max-width:75%;padding:.7rem 1rem;border-radius:16px;font-size:.875rem;line-height:1.55;word-break:break-word;animation:fadeUp .2s ease}
+.msg.mine{align-self:flex-end;background:var(--c5);color:#fff;border-bottom-right-radius:4px}
+.msg.theirs{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+.msg-time{font-size:.6rem;opacity:.6;margin-top:.3rem;text-align:right}
+.msg.theirs .msg-time{text-align:left}
+.typing{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:4px;padding:.7rem 1rem;display:none}
+.typing.show{display:block}
+.typing-dots{display:flex;gap:.3rem;align-items:center;height:16px}
+.tdot{width:6px;height:6px;background:var(--text2);border-radius:50%;animation:bounce .9s infinite}
+.tdot:nth-child(2){animation-delay:.15s}
+.tdot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.chat-input-bar{display:flex;gap:.6rem;padding:.75rem 1rem;background:var(--surface);border-top:1px solid var(--border)}
+.chat-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:20px;padding:.6rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.875rem;outline:none;transition:border-color .2s}
+.chat-input:focus{border-color:var(--c4)}
+.send-btn{background:var(--c5);border:none;border-radius:50%;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.send-btn:hover{background:var(--c4);transform:scale(1.05)}
+.send-btn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* COMUNIDAD */
+.post-compose{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:1rem;margin-bottom:1.25rem}
+.compose-top{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:.75rem}
+.mini-av{width:34px;height:34px;border-radius:50%;overflow:hidden;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid var(--border)}
+.mini-av img{width:100%;height:100%;object-fit:cover}
+.mini-av-init{font-size:.8rem;font-weight:700;color:var(--c5)}
+.posts-list{display:flex;flex-direction:column;gap:.75rem}
+.post-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1rem;animation:fadeUp .2s ease}
+.post-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.75rem}
+.post-author{font-size:.85rem;font-weight:600;color:var(--text)}
+.post-sub{font-size:.68rem;color:var(--text2)}
+.post-time{font-size:.68rem;color:var(--text2);margin-left:auto}
+.post-text{font-size:.875rem;line-height:1.6;margin-bottom:.75rem;color:var(--text)}
+.post-actions{display:flex;gap:.5rem}
+.action-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.35rem .7rem;font-size:.75rem;cursor:pointer;color:var(--text2);transition:all .2s;display:flex;align-items:center;gap:.3rem;font-family:'DM Sans',sans-serif}
+.action-btn:hover{border-color:var(--c4);color:var(--c5)}
+.action-btn.liked{border-color:var(--c1);color:var(--c1)}
+.action-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.action-btn.liked svg{fill:var(--c1)}
+
+
+/* PERFIL */
+.profile-header{background:linear-gradient(135deg,var(--c3),var(--c2));border-radius:20px;padding:2rem 1.5rem;margin-bottom:1.25rem;text-align:center;position:relative;overflow:hidden}
+.profile-header::before{content:'';position:absolute;left:-40px;bottom:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.12)}
+.profile-av-big{width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto 1rem;border:3px solid rgba(255,255,255,.5);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.profile-av-big img{width:100%;height:100%;object-fit:cover}
+.profile-av-big-init{font-size:1.8rem;font-weight:700;color:var(--c5)}
+.av-edit{position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--c5);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.av-edit svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.5}
+.profile-name{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--text);margin-bottom:.3rem}
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.15rem;margin-bottom:1.25rem}
+.plan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.plan-ttl{font-weight:600;font-size:.95rem;color:var(--text)}
+.feature-list{display:flex;flex-direction:column;gap:.5rem}
+.feature-item{display:flex;align-items:center;gap:.65rem;font-size:.85rem;color:var(--text)}
+.feat-check{width:16px;height:16px;flex-shrink:0}
+.feat-check svg{width:100%;height:100%;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.feat-locked{color:var(--text2)}
+.plan-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-top:1.25rem}
+.plan-btn{padding:.7rem .4rem;border-radius:12px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;color:var(--text2);transition:all .2s;text-align:center}
+.plan-btn:hover{transform:translateY(-2px)}
+.plan-btn.s:hover,.plan-btn.s.cur{border-color:#2E7D5E;color:#2E7D5E}
+.plan-btn.b:hover,.plan-btn.b.cur{border-color:var(--c5);color:var(--c5)}
+.plan-btn.r:hover,.plan-btn.r.cur{border-color:var(--c1);color:var(--c1)}
+.plan-btn.cur{opacity:.7;cursor:default;transform:none}
+.avatar-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.15rem;margin-bottom:1.25rem}
+.av-upload-area{border:2px dashed var(--border);border-radius:14px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.av-upload-area:hover{border-color:var(--c4);background:rgba(156,175,183,.05)}
+.av-upload-text{font-size:.82rem;color:var(--text2);margin-top:.5rem}
+.av-upload-sub{font-size:.72rem;color:var(--text2);opacity:.7;margin-top:.2rem}
+.av-preview{display:flex;align-items:center;gap:1rem;padding:.75rem;background:var(--surface2);border-radius:12px;margin-top:.75rem}
+.av-preview img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border)}
+.av-preview-info{flex:1}
+.av-preview-name{font-size:.82rem;font-weight:600;color:var(--text)}
+.av-preview-change{font-size:.72rem;color:var(--c5);cursor:pointer}
+.btn-danger{width:100%;padding:.9rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:.875rem;cursor:pointer;transition:all .2s}
+.btn-danger:hover{border-color:#E24B4A;color:#E24B4A}
+
+
+/* BLOGS */
+.blog-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .2s}
+.blog-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.blog-img{width:100%;height:130px;object-fit:cover;background:var(--c3);display:flex;align-items:center;justify-content:center}
+.blog-img-placeholder{width:100%;height:130px;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.blog-body{padding:1rem}
+.blog-cat{font-size:.65rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c5);margin-bottom:.4rem}
+.blog-title{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--text);margin-bottom:.5rem;line-height:1.35}
+.blog-text{font-size:.8rem;color:var(--text2);line-height:1.6;margin-bottom:.75rem}
+.blog-meta{font-size:.7rem;color:var(--text2)}
+
+/* CURSOS */
+.curso-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.1rem;transition:all .2s}
+.curso-card:hover{box-shadow:var(--shadow)}
+.curso-top{display:flex;gap:.85rem;align-items:flex-start;margin-bottom:.85rem}
+.curso-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.curso-icon svg{width:24px;height:24px;stroke-width:1.8;fill:none}
+.curso-info{flex:1}
+.curso-title{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--text);margin-bottom:.2rem}
+.curso-desc{font-size:.78rem;color:var(--text2);line-height:1.5;margin-bottom:.4rem}
+.curso-meta{font-size:.7rem;color:var(--text2);display:flex;gap:.75rem}
+.progress-wrap{margin-bottom:.85rem}
+.progress-label{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text2);margin-bottom:.35rem}
+.progress-bar{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--c4),var(--c5));transition:width .4s}
+.modulos-list{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.85rem}
+.modulo-item{display:flex;align-items:center;gap:.6rem;font-size:.8rem;padding:.4rem .6rem;border-radius:8px;background:var(--surface2);color:var(--text2)}
+.modulo-item.done{color:var(--c5)}
+.modulo-check{width:16px;height:16px;flex-shrink:0}
+.modulo-check svg{width:100%;height:100%;stroke-width:2.5;fill:none}
+.btn-curso{width:100%;padding:.75rem;background:var(--c5);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-curso:hover{background:var(--c4)}
+/* TOAST */
+#toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.65rem 1.25rem;font-size:.82rem;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);max-width:300px;text-align:center;pointer-events:none;color:var(--text);box-shadow:var(--shadow)}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* LOCK MODAL */
+#lockModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+#lockModal.open{display:flex}
+.lock-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2rem;max-width:300px;width:90%;text-align:center;box-shadow:var(--shadow)}
+.lock-icon{width:52px;height:52px;background:rgba(156,175,183,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .85rem}
+.lock-icon svg{width:24px;height:24px;stroke:var(--c4);fill:none;stroke-width:1.8}
+.lock-title{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.5rem;color:var(--text)}
+.lock-sub{font-size:.82rem;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.lock-btns{display:flex;gap:.6rem}
+.btn-ghost{flex:1;padding:.8rem;border:1px solid var(--border);border-radius:12px;background:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--text);color:var(--text)}
+.btn-cta{flex:1;padding:.8rem;background:var(--c5);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-cta:hover{background:var(--c4)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- LOGIN -->
+<div id="loginScreen" class="screen active">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-name">Kokomori</div>
+      <div class="brand-line"></div>
+      <div class="brand-sub">Tu espacio seguro</div>
+    </div>
+    <span class="login-label">Selecciona tu cuenta</span>
+    <div class="user-grid" id="userGrid"></div>
+    <button class="btn-primary" id="loginBtn" disabled onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="screen" style="flex-direction:column">
+  <div class="topbar">
+    <span class="topbar-brand">Kokomori</span>
+    <div class="topbar-right">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">Modo oscuro</button>
+      <div class="topbar-user" onclick="goTo('perfil')">
+        <div class="topbar-avatar" id="topAvatar"></div>
+        <span id="topName" style="font-weight:500;color:var(--text)"></span>
+        <span id="topPlan" class="plan-badge plan-semilla">semilla</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content" id="mainContent">
+
+    <!-- HOME -->
+    <div id="tabHome">
+      <div class="greeting-card">
+        <div class="greeting-name" id="greetName">Hola</div>
+        <div class="greeting-sub">Como te sientes hoy?</div>
+        <div class="mood-row">
+          <div class="mood-chip" onclick="selectMood(this,'Bien')">Bien</div>
+          <div class="mood-chip" onclick="selectMood(this,'Triste')">Triste</div>
+          <div class="mood-chip" onclick="selectMood(this,'Ansioso')">Ansioso</div>
+          <div class="mood-chip" onclick="selectMood(this,'Enojado')">Enojado</div>
+          <div class="mood-chip" onclick="selectMood(this,'Tranquilo')">Tranquilo</div>
+        </div>
+      </div>
+      <div class="sec-title">Acceso rapido</div>
+      <div class="quick-grid">
+        <div class="quick-card" onclick="goTo('diario')">
+          <div class="qc-icon coral"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <div class="qc-title">Mi Diario</div>
+          <div class="qc-sub">Escribe como te sientes</div>
+        </div>
+        <div class="quick-card" onclick="openChatbot()">
+          <div class="qc-icon blue"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21l4-4 4 4"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="15" cy="10" r="1" fill="currentColor"/></svg></div>
+          <div class="qc-title">Chatbot</div>
+          <div class="qc-sub">Apoyo instantaneo</div>
+        </div>
+        <div class="quick-card" onclick="checkAndGo('comunidad','brote')">
+          <div class="qc-icon teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <div class="qc-title">Comunidad</div>
+          <div class="qc-sub">Comparte con otros</div>
+          <div class="locked-overlay" id="lockComunidad">
+            <svg class="lock-svg" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span class="locked-text">Plan Brote</span>
+          </div>
+        </div>
+        <div class="quick-card" onclick="checkAndGo('chat','raiz')">
+          <div class="qc-icon sand"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="qc-title">Psicologos</div>
+          <div class="qc-sub">Chat profesional</div>
+          <div class="locked-overlay" id="lockPsi">
+            <svg class="lock-svg" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span class="locked-text">Plan Raiz</span>
+          </div>
+        </div>
+      </div>
+      <div class="sec-title">Ultimas entradas</div>
+      <div id="homeEntries"></div>
+    </div>
+
+    <!-- DIARIO -->
+    <div id="tabDiario" style="display:none">
+      <div class="sec-title">Diario Emocional</div>
+      <div class="textarea-wrap">
+        <textarea id="diarioInput" placeholder="Que tienes en mente hoy? Escribe libremente..."></textarea>
+        <div class="textarea-footer">
+          <div class="mood-icons">
+            <div class="mood-pick" onclick="setDiarioMood(this,'Bien')">B</div>
+            <div class="mood-pick" onclick="setDiarioMood(this,'Triste')">T</div>
+            <div class="mood-pick" onclick="setDiarioMood(this,'Ansioso')">A</div>
+            <div class="mood-pick" onclick="setDiarioMood(this,'Enojado')">E</div>
+          </div>
+          <button class="btn-sm" onclick="saveDiario()">Guardar</button>
+        </div>
+      </div>
+      <div class="sec-title">Entradas anteriores</div>
+      <div class="entries-list" id="entriesList"></div>
+    </div>
+
+    <!-- CHAT -->
+    <div id="tabChat" style="display:none;flex-direction:column;height:100%">
+      <div id="chatListView">
+        <div class="sec-title">Mensajes</div>
+        <div class="chat-list" id="chatList"></div>
+      </div>
+      <div id="chatWindow">
+        <div class="chat-header">
+          <button class="back-btn" onclick="closeChatWindow()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <div class="chat-av" id="chatHeaderAv" style="margin:0"></div>
+          <div class="chat-header-info">
+            <div class="chat-header-name" id="chatHeaderName"></div>
+            <div class="online-dot"><span class="dot-live"></span>En linea</div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="typing" id="typingIndicator"><div class="typing-dots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div>
+        </div>
+        <div class="chat-input-bar">
+          <input class="chat-input" id="chatInputField" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+          <button class="send-btn" onclick="sendMsg()"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMUNIDAD -->
+    <div id="tabComunidad" style="display:none">
+      <div class="sec-title">Comunidad</div>
+      <div class="post-compose">
+        <div class="compose-top">
+          <div class="mini-av" id="composeAv"></div>
+          <textarea id="postInput" placeholder="Comparte como te sientes..." style="min-height:70px;font-size:.85rem"></textarea>
+        </div>
+        <button class="btn-sm" style="width:100%" onclick="publishPost()">Publicar</button>
+      </div>
+      <div class="posts-list" id="postsList"></div>
+    </div>
+<!-- BLOGS -->
+<div id="tabBlogs" style="display:none">
+  <div class="sec-title">Blogs de ayuda</div>
+  <div id="blogsList" style="display:flex;flex-direction:column;gap:.85rem"></div>
+</div>
+
+<!-- CURSOS -->
+<div id="tabCursos" style="display:none">
+  <div class="sec-title">Cursos guiados</div>
+  <div id="cursosList" style="display:flex;flex-direction:column;gap:.85rem"></div>
+</div>
+    <!-- PERFIL -->
+    <div id="tabPerfil" style="display:none">
+      <div class="profile-header">
+        <div class="profile-av-big" id="profileAvBig" onclick="triggerAvatarUpload()">
+          <div class="av-edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+        </div>
+        <div class="profile-name" id="profileName"></div>
+        <span id="profilePlanBadge" class="plan-badge plan-semilla" style="display:inline-block;margin-top:.3rem"></span>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-header">
+          <span class="plan-ttl">Tu plan actual</span>
+          <span id="planBadgeLg" class="plan-badge plan-semilla"></span>
+        </div>
+        <div class="feature-list" id="featureList"></div>
+        <div class="plan-buttons">
+          <button class="plan-btn s" onclick="changePlan('semilla')">Semilla</button>
+          <button class="plan-btn b" onclick="changePlan('brote')">Brote</button>
+          <button class="plan-btn r" onclick="changePlan('raiz')">Raiz</button>
+        </div>
+      </div>
+
+      <div class="avatar-section">
+        <div class="sec-title" style="margin-bottom:1rem">Foto de perfil</div>
+        <div class="av-upload-area" onclick="triggerAvatarUpload()">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--c4)" stroke-width="1.5" style="margin:0 auto;display:block"><circle cx="12" cy="12" r="10"/><path d="M12 8v8m-4-4h8"/></svg>
+          <div class="av-upload-text">Subir foto</div>
+          <div class="av-upload-sub">Galeria o camara del dispositivo</div>
+        </div>
+        <div id="avPreview" style="display:none" class="av-preview">
+          <img id="avPreviewImg" src="" alt="avatar"/>
+          <div class="av-preview-info">
+            <div class="av-preview-name">Foto de perfil</div>
+            <div class="av-preview-change" onclick="triggerAvatarUpload()">Cambiar foto</div>
+          </div>
+        </div>
+        <input type="file" id="avatarInput" accept="image/*" capture="environment" style="display:none" onchange="handleAvatarUpload(event)"/>
+      </div>
+
+      <button class="btn-danger" onclick="doLogout()">Cerrar sesion</button>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+      <span>Inicio</span>
+    </button>
+    <button class="nav-item" id="nav-diario" onclick="switchTab('diario')">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+      <span>Diario</span>
+    </button>
+    <button class="nav-item" id="nav-chat" onclick="switchTab('chat')">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+      <span>Chats</span>
+    </button>
+<button class="nav-item" id="nav-comunidad" onclick="switchTab('comunidad')">
+  <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+  <span>Comunidad</span>
+</button>
+<button class="nav-item" id="nav-blogs" onclick="switchTab('blogs')">
+  <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+  <span>Blogs</span>
+</button>
+<button class="nav-item" id="nav-cursos" onclick="switchTab('cursos')">
+  <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+  <span>Cursos</span>
+</button>
+<button class="nav-item" id="nav-perfil" onclick="switchTab('perfil')">
+  <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+  <span>Perfil</span>
+</button>
+  </div>
+</div>
+
+<!-- LOCK MODAL -->
+<div id="lockModal">
+  <div class="lock-card">
+    <div class="lock-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <div class="lock-title" id="lockTitle">Funcion bloqueada</div>
+    <div class="lock-sub" id="lockSub">Actualiza tu plan para acceder.</div>
+    <div class="lock-btns">
+      <button class="btn-ghost" onclick="closeLock()">Cerrar</button>
+      <button class="btn-cta" onclick="closeLock();goTo('perfil')">Ver planes</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+</div>
+<script>
+const USERS=[
+  {id:'user1',name:'Luna',role:'usuario'},
+  {id:'user2',name:'Mateo',role:'usuario'},
+  {id:'psi1',name:'Dra. Sofia',role:'psicologa'},
+  {id:'psi2',name:'Dr. Andres',role:'psicologo'},
+];
+const PLANS={
+  semilla:{label:'Semilla',cls:'plan-semilla',
+    features:[
+      {text:'Sin anuncios',ok:true},
+      {text:'Personalizacion de avatar',ok:true},
+      {text:'Stickers en comunidad y diario',ok:true},
+      {text:'Chat con psicologo',ok:true},
+      {text:'2 sesiones psicologicas al mes',ok:true},
+      {text:'Blogs de ayuda premium',ok:false},
+      {text:'Cursos guiados de ayuda',ok:false},
+    ]},
+  brote:{label:'Brote',cls:'plan-brote',
+    features:[
+      {text:'Sin anuncios',ok:true},
+      {text:'Personalizacion de avatar',ok:true},
+      {text:'Stickers en comunidad y diario',ok:true},
+      {text:'Chat con psicologo',ok:true},
+      {text:'4 sesiones psicologicas al mes',ok:true},
+      {text:'Blogs de ayuda premium',ok:true},
+      {text:'Cursos guiados de ayuda',ok:true},
+    ]},
+  raiz:{label:'Raiz',cls:'plan-raiz',
+    features:[
+      {text:'Sin anuncios',ok:true},
+      {text:'Personalizacion de avatar',ok:true},
+      {text:'Stickers en comunidad y diario',ok:true},
+      {text:'Chat con psicologo',ok:true},
+      {text:'4 sesiones x 2 meses incluidas',ok:true},
+      {text:'Blogs de ayuda premium',ok:true},
+      {text:'Cursos guiados de ayuda',ok:true},
+    ]},
+};
+const PSI_RESP=[
+  'Puedes contarme mas sobre eso? Te escucho con atencion.',
+  'Entiendo como te sientes. Es completamente valido.',
+  'Es valiente de tu parte compartir esto. Hace cuanto tiempo te sientes asi?',
+  'Gracias por confiar en mi. Has podido hablar con alguien mas sobre esto?',
+  'Recuerda que no estas solo. Estoy aqui para apoyarte.',
+  'Eso que describes suena difícil. Que te ayuda cuando te sientes asi?',
+  'Tu bienestar es lo mas importante. Como has dormido ultimamente?',
+  'Me alegra que hayas decidido buscar apoyo hoy.',
+];
+const BOT_RESP={
+  triste:'Siento mucho que te sientas asi. La tristeza es una emocion valida y temporal. Te recomiendo escribir en tu diario como te sientes, eso ayuda a procesar las emociones. Recuerda: esta bien no estar bien.',
+  ansioso:'La ansiedad puede ser muy abrumadora. Prueba la tecnica 4-7-8: inhala por 4 segundos, reten el aire 7 segundos y exhala lentamente en 8. Repitelo 3 veces. Tambien puedes escribir en tu diario lo que te preocupa.',
+  enojado:'El enojo es completamente valido. Intenta identificar que lo causo: fue una situacion, una persona, o algo interno? Escribe sin filtros en tu diario, eso libera tension. Si sientes que el enojo es frecuente, considera hablar con un psicologo.',
+  bien:'Me alegra mucho escuchar eso! Aprovecha esta energia positiva. Puedes compartirlo en la comunidad para motivar a otros. Momentos como este son importantes de recordar, guardalo en tu diario.',
+  ayuda:'Kokomori es una app de apoyo emocional. Tienes tu diario para escribir como te sientes, una comunidad donde compartir, y acceso a psicologos segun tu plan. Todo lo que escribes es privado y se guarda en tu dispositivo.',
+  plan:'Tenemos 3 planes: Semilla (gratis) incluye el diario y el chatbot. Brote agrega acceso a la comunidad y foto de perfil. Raiz incluye todo lo anterior mas chat directo con psicologos profesionales.',
+  psicologo:'Un psicologo puede ayudarte a entender tus emociones y desarrollar herramientas para manejarlas. En Kokomori puedes chatear con psicologos si tienes el plan Raiz. No tienes que estar en crisis para buscar apoyo.',
+  diario:'El diario emocional es tu espacio privado. Escribir como te sientes ayuda a identificar patrones, procesar emociones y conocerte mejor. Se recomienda escribir al menos una vez al dia.',
+  default:'Estoy aqui para escucharte y apoyarte. Puedes contarme como te sientes, preguntarme sobre la app, o explorar los recursos que tenemos. Escribe algo como: me siento triste, me siento ansioso, o que es Kokomori.',
+};
+
+function getDB(){try{return JSON.parse(localStorage.getItem('kokomori_v2'))||initDB();}catch(e){return initDB();}}
+function saveDB(d){localStorage.setItem('kokomori_v2',JSON.stringify(d));}
+function initDB(){
+  const d={currentUser:null,planes:{user1:'semilla',user2:'brote',psi1:'raiz',psi2:'raiz'},
+    avatars:{},diarios:{},chats:{},
+    comunidad:[
+  {id:1,user:'psi1',text:'Bienvenidos a la comunidad Kokomori. Este es un espacio seguro para compartir sus experiencias, apoyarse mutuamente y crecer juntos. Recuerden: no estan solos.',likes:['user1','user2'],eliminado:false,ts:Date.now()-86400000},
+  {id:2,user:'psi2',text:'Consejo del dia: Tomar 5 minutos para respirar profundo puede cambiar completamente tu estado emocional. La respiracion consciente activa el sistema nervioso parasimpatico y reduce el estres de forma inmediata.',likes:['user1'],eliminado:false,ts:Date.now()-72000000},
+  {id:3,user:'user2',text:'Hoy intente meditar por primera vez y me ayudo mucho a calmar la ansiedad. Solo fueron 10 minutos pero senti una diferencia enorme. Alguien mas lo practica?',likes:['psi1'],eliminado:false,ts:Date.now()-43200000},
+  {id:4,user:'psi1',text:'Recordatorio importante: buscar ayuda no es una debilidad, es un acto de valentia y amor propio. Si sientes que necesitas hablar con alguien, estamos aqui para ti.',likes:['user1','user2'],eliminado:false,ts:Date.now()-21600000},
+  {id:5,user:'user1',text:'Llevo dos semanas escribiendo en mi diario todos los dias y noto que entiendo mejor mis emociones. Es increible como poner en palabras lo que sientes ayuda a procesarlo.',likes:['psi2'],eliminado:false,ts:Date.now()-7200000},
+  {id:6,user:'psi2',text:'Tip de salud mental: intenta identificar 3 cosas por las que estes agradecido cada noche antes de dormir. La gratitud entrena al cerebro a enfocarse en lo positivo.',likes:['user1','user2'],eliminado:false,ts:Date.now()-3600000},
+]};
+  saveDB(d);return d;
+}
+function getPlan(uid){return getDB().planes[uid||getDB().currentUser]||'semilla';}
+const ACCESS={
+  semilla:['diario','chatbot','avatar','psicologo'],
+  brote:['diario','chatbot','avatar','psicologo','comunidad','blogs','cursos'],
+  raiz:['diario','chatbot','avatar','psicologo','comunidad','blogs','cursos'],
+};
+function hasAccess(f){return ACCESS[getPlan()].includes(f);}
+function curUser(){return getDB().currentUser;}
+function curUserObj(){return USERS.find(u=>u.id===curUser())||USERS[0];}
+
+// AVATAR helpers
+function getAvatarImg(uid){return getDB().avatars[uid||curUser()]||null;}
+function renderAvEl(el, uid, initials, size=44){
+  if(!el)return;
+  const img=getAvatarImg(uid||curUser());
+  if(img){el.innerHTML=`<img src="${img}" alt="av" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;}
+  else{el.innerHTML=`<span class="u-avatar-initials" style="font-size:${size>40?'1.1rem':'.75rem'};font-weight:700;color:var(--c5)">${initials||'?'}</span>`;}
+}
+
+// THEME
+let darkMode=false;
+function toggleTheme(){
+  darkMode=!darkMode;
+  document.documentElement.setAttribute('data-theme',darkMode?'dark':'');
+  document.getElementById('themeBtn').textContent=darkMode?'Modo claro':'Modo oscuro';
+}
+
+// LOGIN
+let selUser=null;
+function buildLoginScreen(){
+  const grid=document.getElementById('userGrid');
+  grid.innerHTML='';
+  USERS.forEach(u=>{
+    const d=document.createElement('div');
+    d.className='user-btn';d.onclick=()=>selectUser(u.id,d);
+    const av=getAvatarImg(u.id);
+    d.innerHTML=`<div class="u-avatar">${av?`<img src="${av}" alt="av">`:`<span class="u-avatar-initials">${u.name[0]}</span>`}</div>
+      <span class="u-name">${u.name}</span><span class="u-role">${u.role}</span>`;
+    grid.appendChild(d);
+  });
+}
+function selectUser(id,el){
+  selUser=id;
+  document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('loginBtn').disabled=false;
+}
+function doLogin(){
+  if(!selUser)return;
+  const d=getDB();d.currentUser=selUser;saveDB(d);
+  document.getElementById('loginScreen').classList.remove('active');
+  document.getElementById('mainApp').classList.add('active');
+  initApp();
+}
+function doLogout(){
+  const d=getDB();d.currentUser=null;saveDB(d);selUser=null;
+  document.getElementById('mainApp').classList.remove('active');
+  document.getElementById('loginScreen').classList.add('active');
+  document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('loginBtn').disabled=true;
+  switchTab('home');buildLoginScreen();
+}
+
+function initApp(){
+  const u=curUserObj(),plan=getPlan();
+  const topAv=document.getElementById('topAvatar');
+  renderAvEl(topAv,curUser(),u.name[0],28);
+  document.getElementById('topName').textContent=u.name;
+  const pb=document.getElementById('topPlan');
+  pb.textContent=plan;pb.className='plan-badge plan-'+plan;
+  document.getElementById('greetName').textContent='Hola, '+u.name;
+  updateLocks();renderHomeEntries();
+}
+function updateLocks(){
+  document.getElementById('lockComunidad').classList.toggle('show',!hasAccess('comunidad'));
+  document.getElementById('lockPsi').classList.toggle('show',!hasAccess('psicologo'));
+}
+
+// NAV
+let curTab='home';
+function switchTab(tab){
+  if(tab==='comunidad'&&!hasAccess('comunidad')){showLock('Comunidad','plan Brote');return;}
+  if(tab==='chat'&&!hasAccess('psicologo')&&tab==='chat'){
+    // still allow chatbot
+  }
+  curTab=tab;
+ ['home','diario','chat','comunidad','blogs','cursos','perfil'].forEach(t=>{
+    const el=document.getElementById('tab'+t[0].toUpperCase()+t.slice(1));
+    if(el)el.style.display='none';
+  });
+  const active=document.getElementById('tab'+tab[0].toUpperCase()+tab.slice(1));
+  if(active)active.style.display=tab==='chat'?'flex':'block';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+tab);if(nav)nav.classList.add('active');
+  if(tab!=='chat')closeChatWindow();
+  if(tab==='diario')renderDiario();
+  if(tab==='chat')renderChatList();
+  if(tab==='comunidad')renderComunidad();
+  if(tab==='perfil')renderPerfil();
+  if(tab==='home')renderHomeEntries();
+  if(tab==='blogs')renderBlogs();
+  if(tab==='cursos')renderCursos();
+}
+function goTo(tab){switchTab(tab);}
+function checkAndGo(tab,req){
+  if(tab==='comunidad'&&!hasAccess('comunidad')){showLock('Comunidad','plan Brote');return;}
+  if(tab==='chat'&&!hasAccess('psicologo')){showLock('Chat con psicologos','plan Raiz');return;}
+  switchTab(tab);
+}
+
+// DIARIO
+let selMood='';
+function selectMood(el,m){
+  document.querySelectorAll('.mood-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');selMood=m;
+}
+function setDiarioMood(el,m){
+  document.querySelectorAll('.mood-pick').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');selMood=m;
+}
+function saveDiario(){
+  const txt=document.getElementById('diarioInput').value.trim();
+  if(!txt){showToast('Escribe algo primero');return;}
+  const d=getDB(),uid=curUser();
+  if(!d.diarios[uid])d.diarios[uid]=[];
+  d.diarios[uid].unshift({id:Date.now(),text:txt,mood:selMood||'Neutral',ts:Date.now(),eliminado:false});
+  saveDB(d);
+  document.getElementById('diarioInput').value='';selMood='';
+  document.querySelectorAll('.mood-pick,.mood-chip').forEach(c=>c.classList.remove('active','selected'));
+  renderDiario();renderHomeEntries();showToast('Entrada guardada');
+}
+function deleteDiario(id){
+  const d=getDB(),uid=curUser();
+  const e=d.diarios[uid]?.find(x=>x.id===id);if(e)e.eliminado=true;
+  saveDB(d);renderDiario();renderHomeEntries();showToast('Entrada eliminada');
+}
+function renderDiario(){
+  const d=getDB(),uid=curUser();
+  const entries=(d.diarios[uid]||[]).filter(e=>!e.eliminado);
+  const list=document.getElementById('entriesList');
+  if(!entries.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><p>Aun no hay entradas.<br>Comienza a escribir!</p></div>`;
+    return;
+  }
+  list.innerHTML=entries.map(e=>`
+    <div class="entry-card">
+      <div class="entry-top">
+        <span class="entry-mood-label">${e.mood}</span>
+        <span class="entry-date">${formatDate(e.ts)}</span>
+        <button class="delete-btn" onclick="deleteDiario(${e.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6m4-6v6"/></svg></button>
+      </div>
+      <div class="entry-text">${esc(e.text)}</div>
+    </div>`).join('');
+}
+function renderHomeEntries(){
+  const d=getDB(),uid=curUser();
+  const entries=(d.diarios[uid]||[]).filter(e=>!e.eliminado).slice(0,2);
+  const el=document.getElementById('homeEntries');
+  if(!entries.length){el.innerHTML=`<div class="empty-state" style="padding:1.5rem"><div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><p>Ve al diario y escribe tu primera entrada</p></div>`;return;}
+  el.innerHTML='<div class="entries-list">'+entries.map(e=>`<div class="entry-card"><div class="entry-top"><span class="entry-mood-label">${e.mood}</span><span class="entry-date">${formatDate(e.ts)}</span></div><div class="entry-text">${esc(e.text.substring(0,80))}${e.text.length>80?'...':''}</div></div>`).join('')+'</div>';
+}
+
+// CHATBOT
+function openChatbot(){openChatWith('bot');switchTab('chat');}
+
+// CHAT
+let activePeer=null;
+function renderChatList(){
+  document.getElementById('chatListView').style.display='block';
+  document.getElementById('chatWindow').classList.remove('open');
+  const list=document.getElementById('chatList');
+  const contacts=[{id:'bot',name:'Kokobot',role:'Asistente virtual',initials:'KB'}];
+  if(hasAccess('psicologo')){
+    USERS.filter(u=>u.role.includes('sicol')).forEach(u=>{
+      const d=getDB(),room=getRoomId(curUser(),u.id);
+      const msgs=d.chats[room]||[];const last=msgs[msgs.length-1];
+      contacts.push({id:u.id,name:u.name,role:u.role,initials:u.name[0],preview:last?last.text.substring(0,40):'Inicia una conversacion',ts:last?last.ts:null});
+    });
+  }
+  list.innerHTML=contacts.map(c=>{
+    const img=getAvatarImg(c.id);
+    const avHtml=img?`<img src="${img}" alt="av">`:`<span class="chat-av-init">${c.initials}</span>`;
+    return`<div class="chat-item" onclick="openChatWith('${c.id}')">
+      <div class="chat-av">${avHtml}</div>
+      <div class="chat-info"><div class="chat-name">${c.name}</div><div class="chat-preview">${c.preview||'Toca para chatear'}</div></div>
+      ${c.ts?`<span class="chat-time">${formatTime(c.ts)}</span>`:''}
+    </div>`;
+  }).join('');
+}
+function getRoomId(a,b){return[a,b].sort().join('_');}
+function openChatWith(peerId){
+  activePeer=peerId;
+  const isBot=peerId==='bot';
+  const peer=isBot?{name:'Kokobot',id:'bot'}:USERS.find(u=>u.id===peerId);
+  const hAv=document.getElementById('chatHeaderAv');
+  const img=getAvatarImg(peerId);
+  hAv.innerHTML=img?`<img src="${img}" alt="av" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span class="chat-av-init">${isBot?'KB':peer.name[0]}</span>`;
+  document.getElementById('chatHeaderName').textContent=peer.name;
+  document.getElementById('chatListView').style.display='none';
+  document.getElementById('chatWindow').classList.add('open');
+  renderMessages();
+  setTimeout(()=>{const m=document.getElementById('chatMessages');m.scrollTop=m.scrollHeight;},50);
+}
+function closeChatWindow(){
+  document.getElementById('chatWindow').classList.remove('open');
+  document.getElementById('chatListView').style.display='block';
+  activePeer=null;
+}
+function renderMessages(){
+  const d=getDB(),isBot=activePeer==='bot';
+  const roomKey=isBot?'bot_'+curUser():getRoomId(curUser(),activePeer);
+  let msgs=d.chats[roomKey]||[];
+  if(!msgs.length){
+    const peerName=isBot?'Kokobot':(USERS.find(u=>u.id===activePeer)?.name||'');
+    msgs=[{from:activePeer||'bot',text:isBot?'Hola! Soy Kokobot. Estoy aqui para apoyarte. Como te sientes hoy?':`Hola, soy ${peerName}. En que puedo ayudarte?`,ts:Date.now()-60000}];
+  }
+  const container=document.getElementById('chatMessages');
+  const typing=document.getElementById('typingIndicator');
+  container.innerHTML='';container.appendChild(typing);
+  msgs.forEach(m=>{
+    const div=document.createElement('div');
+    div.className='msg '+(m.from===curUser()?'mine':'theirs');
+    div.innerHTML=esc(m.text)+`<div class="msg-time">${formatTime(m.ts)}</div>`;
+    container.insertBefore(div,typing);
+  });
+  container.scrollTop=container.scrollHeight;
+}
+function sendMsg(){
+  const inp=document.getElementById('chatInputField');
+  const txt=inp.value.trim();if(!txt)return;inp.value='';
+  const d=getDB(),isBot=activePeer==='bot';
+  const roomKey=isBot?'bot_'+curUser():getRoomId(curUser(),activePeer);
+  if(!d.chats[roomKey])d.chats[roomKey]=[];
+  d.chats[roomKey].push({from:curUser(),text:txt,ts:Date.now()});
+  saveDB(d);renderMessages();
+  const typing=document.getElementById('typingIndicator');
+  typing.classList.add('show');document.getElementById('chatMessages').scrollTop=99999;
+  setTimeout(()=>{
+    typing.classList.remove('show');
+    const d2=getDB();let reply;
+    if(isBot){
+      const l=txt.toLowerCase();
+if(l.includes('triste')||l.includes('llor')||l.includes('mal'))reply=BOT_RESP.triste;
+else if(l.includes('ansios')||l.includes('nerv')||l.includes('estres'))reply=BOT_RESP.ansioso;
+else if(l.includes('enojad')||l.includes('rabia')||l.includes('ira')||l.includes('molest'))reply=BOT_RESP.enojado;
+else if(l.includes('bien')||l.includes('feliz')||l.includes('alegr')||l.includes('content'))reply=BOT_RESP.bien;
+else if(l.includes('ayuda')||l.includes('como funciona')||l.includes('que es')||l.includes('para que'))reply=BOT_RESP.ayuda;
+else if(l.includes('plan')||l.includes('precio')||l.includes('semilla')||l.includes('brote')||l.includes('raiz'))reply=BOT_RESP.plan;
+else if(l.includes('psicolog')||l.includes('terapeuta')||l.includes('profesional'))reply=BOT_RESP.psicologo;
+else if(l.includes('diario')||l.includes('escribir')||l.includes('entrada'))reply=BOT_RESP.diario;
+else reply=BOT_RESP.default;
+      if(!d2.chats['bot_'+curUser()])d2.chats['bot_'+curUser()]=[];
+      d2.chats['bot_'+curUser()].push({from:'bot',text:reply,ts:Date.now()});
+    } else {
+      reply=PSI_RESP[Math.floor(Math.random()*PSI_RESP.length)];
+      if(!d2.chats[roomKey])d2.chats[roomKey]=[];
+      d2.chats[roomKey].push({from:activePeer,text:reply,ts:Date.now()});
+    }
+    saveDB(d2);renderMessages();
+  },1000+Math.random()*800);
+}
+
+// COMUNIDAD
+function renderComunidad(){
+  const d=getDB(),uid=curUser();
+  const compAv=document.getElementById('composeAv');
+  renderAvEl(compAv,uid,curUserObj().name[0],34);
+  const posts=d.comunidad.filter(p=>!p.eliminado).reverse();
+  const list=document.getElementById('postsList');
+  if(!posts.length){list.innerHTML=`<div class="empty-state"><p>Se el primero en publicar algo</p></div>`;return;}
+  list.innerHTML=posts.map(p=>{
+    const author=USERS.find(u=>u.id===p.user)||{name:p.user};
+    const img=getAvatarImg(p.user);
+    const avHtml=img?`<img src="${img}" alt="av" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span class="mini-av-init">${author.name[0]}</span>`;
+    const liked=(p.likes||[]).includes(uid);
+    const isOwn=p.user===uid;
+    return`<div class="post-card">
+      <div class="post-header">
+        <div class="mini-av">${avHtml}</div>
+        <div><div class="post-author">${author.name}</div><div class="post-sub">${author.role||'usuario'}</div></div>
+        <div class="post-time">${formatDate(p.ts)}</div>
+      </div>
+      <div class="post-text">${esc(p.text)}</div>
+      <div class="post-actions">
+        <button class="action-btn ${liked?'liked':''}" onclick="likePost(${p.id})">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          ${(p.likes||[]).length}
+        </button>
+        ${isOwn?`<button class="action-btn" onclick="deletePost(${p.id})" style="margin-left:auto">Eliminar</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function publishPost(){
+  const txt=document.getElementById('postInput').value.trim();
+  if(!txt){showToast('Escribe algo primero');return;}
+  const d=getDB();
+  d.comunidad.push({id:Date.now(),user:curUser(),text:txt,likes:[],eliminado:false,ts:Date.now()});
+  saveDB(d);document.getElementById('postInput').value='';renderComunidad();showToast('Publicado');
+}
+function likePost(id){
+  const d=getDB(),uid=curUser();
+  const p=d.comunidad.find(x=>x.id===id);if(!p)return;
+  if(!p.likes)p.likes=[];
+  const i=p.likes.indexOf(uid);
+  if(i>-1)p.likes.splice(i,1);else p.likes.push(uid);
+  saveDB(d);renderComunidad();
+}
+function deletePost(id){
+  const d=getDB();const p=d.comunidad.find(x=>x.id===id);
+  if(p&&p.user===curUser())p.eliminado=true;
+  saveDB(d);renderComunidad();showToast('Post eliminado');
+}
+
+// PERFIL
+function renderPerfil(){
+  const u=curUserObj(),plan=getPlan(),pi=PLANS[plan];
+  const bigAv=document.getElementById('profileAvBig');
+  const img=getAvatarImg(curUser());
+  const inner=img?`<img src="${img}" alt="av" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span class="profile-av-big-init">${u.name[0]}</span>`;
+  bigAv.innerHTML=inner+`<div class="av-edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>`;
+  document.getElementById('profileName').textContent=u.name;
+  const ppb=document.getElementById('profilePlanBadge');ppb.textContent=pi.label;ppb.className='plan-badge plan-'+plan;
+  document.getElementById('planBadgeLg').textContent=pi.label;document.getElementById('planBadgeLg').className='plan-badge plan-'+plan;
+  document.getElementById('featureList').innerHTML=pi.features.map(f=>`
+    <div class="feature-item">
+      <span class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="${f.ok?'var(--c5)':'var(--text2)'}" stroke-width="2.5">${f.ok?'<polyline points="20 6 9 17 4 12"/>':'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'}</svg></span>
+      <span class="${f.ok?'':'feat-locked'}">${f.text}</span>
+    </div>`).join('');
+  document.querySelectorAll('.plan-btn').forEach(b=>{
+    b.classList.remove('cur');
+    if((b.classList.contains('s')&&plan==='semilla')||(b.classList.contains('b')&&plan==='brote')||(b.classList.contains('r')&&plan==='raiz'))b.classList.add('cur');
+  });
+  // avatar preview
+  const prev=document.getElementById('avPreview');
+  const prevImg=document.getElementById('avPreviewImg');
+  if(img){prev.style.display='flex';prevImg.src=img;}
+  else{prev.style.display='none';}
+}
+function changePlan(plan){
+  const d=getDB();d.planes[curUser()]=plan;saveDB(d);
+  updateLocks();initApp();renderPerfil();showToast('Plan cambiado a '+PLANS[plan].label);
+}
+function triggerAvatarUpload(){
+  if(!hasAccess('avatar')){showLock('Foto de perfil','plan Brote');return;}
+  document.getElementById('avatarInput').click();
+}
+function handleAvatarUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('Solo se permiten imagenes');return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const d=getDB();d.avatars[curUser()]=ev.target.result;saveDB(d);
+    initApp();renderPerfil();buildLoginScreen();
+    if(curTab==='comunidad')renderComunidad();
+    if(curTab==='chat')renderChatList();
+    showToast('Foto actualizada');
+  };
+  reader.readAsDataURL(file);
+  e.target.value='';
+}
+
+// LOCK
+function showLock(feat,plan){
+  document.getElementById('lockTitle').textContent=feat+' bloqueado';
+  document.getElementById('lockSub').textContent='Necesitas el '+plan+' para acceder. Actualiza desde tu perfil.';
+  document.getElementById('lockModal').classList.add('open');
+}
+function closeLock(){document.getElementById('lockModal').classList.remove('open');}
+
+// TOAST
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// UTILS
+function formatDate(ts){return new Date(ts).toLocaleDateString('es-MX',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}
+function formatTime(ts){return new Date(ts).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+// BLOGS DATA
+const BLOGS=[
+  {id:1,cat:'Ansiedad',titulo:'Como manejar la ansiedad en el dia a dia',texto:'La ansiedad es una respuesta natural del cuerpo ante situaciones de estres. Aprender a identificar sus señales tempranas es el primer paso para manejarla. Tecnicas como la respiracion diafragmatica, el ejercicio regular y la escritura en un diario pueden reducir significativamente su intensidad. Recuerda que buscar ayuda profesional no es debilidad, es sabiduria.',img:'',color:'rgba(156,175,183,.2)',icon:'🧘'},
+  {id:2,cat:'Autoestima',titulo:'Construyendo una autoestima saludable',texto:'La autoestima no es algo con lo que nacemos fija, se construye y reconstruye a lo largo de la vida. Identificar tus fortalezas, celebrar tus logros por pequeños que sean, y rodearte de personas que te nutran son pasos fundamentales. El dialogo interno positivo transforma gradualmente la forma en que te percibes.',img:'',color:'rgba(234,210,172,.3)',icon:'⭐'},
+  {id:3,cat:'Duelo',titulo:'Atravesar el duelo: un camino no lineal',texto:'El duelo no sigue un orden fijo. Puede ir y venir, mezclarse con alivio, culpa o confusion. Lo importante es permitirse sentir sin juzgarse. Hablar de lo que sientes, ya sea con alguien de confianza o un profesional, facilita el proceso. No hay un tiempo correcto para sanar.',img:'',color:'rgba(254,147,140,.15)',icon:'💙'},
+  {id:4,cat:'Relaciones',titulo:'Limites saludables en tus relaciones',texto:'Establecer limites no significa rechazar a otros, significa cuidarte a ti mismo. Un limite saludable comunica tus necesidades con respeto y firmeza. Aprender a decir no, identificar que te drena energia y que te recarga, son habilidades que se practican y fortalecen con el tiempo.',img:'',color:'rgba(66,129,164,.1)',icon:'🤝'},
+  {id:5,cat:'Mindfulness',titulo:'Introduccion al mindfulness: vivir el presente',texto:'Mindfulness es la practica de prestar atencion al momento presente sin juzgarlo. No requiere experiencia previa ni mucho tiempo. Con solo 5 minutos al dia de observacion consciente de tu respiracion puedes comenzar a notar diferencias en tu nivel de estres y claridad mental.',img:'',color:'rgba(154,207,183,.2)',icon:'🌿'},
+];
+
+// CURSOS DATA
+const CURSOS=[
+  {id:1,titulo:'Manejo de la ansiedad',desc:'Aprende herramientas practicas y cientificamente respaldadas para reducir la ansiedad en tu vida cotidiana.',duracion:'4 semanas',modulos:['Que es la ansiedad y como funciona','Tecnicas de respiracion y relajacion','Pensamientos automaticos negativos','Construyendo rutinas de bienestar'],color:'rgba(156,175,183,.2)',iconColor:'var(--c4)',progreso:{user1:2,user2:0,psi1:4,psi2:1}},
+  {id:2,titulo:'Autoestima y amor propio',desc:'Un recorrido profundo para reconectar con tu valor personal y construir una relacion sana contigo mismo.',duracion:'3 semanas',modulos:['Origen de la autoestima','Dialogo interno y autocritica','Celebrando tus fortalezas','Limites y autocuidado'],color:'rgba(234,210,172,.3)',iconColor:'#8B6E3A',progreso:{user1:0,user2:1,psi1:4,psi2:0}},
+  {id:3,titulo:'Mindfulness para principiantes',desc:'Descubre como vivir el momento presente reduce el estres y mejora tu bienestar general.',duracion:'2 semanas',modulos:['Que es mindfulness','Respiracion consciente','Escaner corporal','Mindfulness en lo cotidiano'],color:'rgba(154,207,183,.2)',iconColor:'#2E7D5E',progreso:{user1:0,user2:3,psi1:4,psi2:2}},
+];
+
+function renderBlogs(){
+  if(!hasAccess('blogs')){
+    document.getElementById('blogsList').innerHTML=`<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><p>Disponible desde el plan Brote.<br><span style="color:var(--c5);cursor:pointer" onclick="goTo('perfil')">Ver planes</span></p></div>`;
+    return;
+  }
+  document.getElementById('blogsList').innerHTML=BLOGS.map(b=>`
+    <div class="blog-card">
+      <div class="blog-img-placeholder" style="background:${b.color};font-size:2.8rem">${b.icon}</div>
+      <div class="blog-body">
+        <div class="blog-cat">${b.cat}</div>
+        <div class="blog-title">${b.titulo}</div>
+        <div class="blog-text">${b.texto}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderCursos(){
+  if(!hasAccess('cursos')){
+    document.getElementById('cursosList').innerHTML=`<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><p>Disponible desde el plan Brote.<br><span style="color:var(--c5);cursor:pointer" onclick="goTo('perfil')">Ver planes</span></p></div>`;
+    return;
+  }
+  const uid=curUser();
+  document.getElementById('cursosList').innerHTML=CURSOS.map(c=>{
+    const prog=c.progreso[uid]||0;
+    const total=c.modulos.length;
+    const pct=Math.round((prog/total)*100);
+    return`<div class="curso-card">
+      <div class="curso-top">
+        <div class="curso-icon" style="background:${c.color}">
+          <svg viewBox="0 0 24 24" stroke="${c.iconColor}"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <div class="curso-info">
+          <div class="curso-title">${c.titulo}</div>
+          <div class="curso-desc">${c.desc}</div>
+          <div class="curso-meta"><span>Duracion: ${c.duracion}</span><span>${total} modulos</span></div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Progreso</span><span>${prog}/${total} modulos</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="modulos-list">
+        ${c.modulos.map((m,i)=>`
+          <div class="modulo-item ${i<prog?'done':''}">
+            <span class="modulo-check"><svg viewBox="0 0 24 24" stroke="${i<prog?'var(--c5)':'var(--text2)'}">${i<prog?'<polyline points="20 6 9 17 4 12"/>':'<circle cx="12" cy="12" r="3"/>'}</svg></span>
+            ${m}
+          </div>`).join('')}
+      </div>
+      <button class="btn-curso" onclick="avanzarCurso(${c.id})">${prog===0?'Iniciar curso':prog===total?'Completado':'Continuar'}</button>
+    </div>`;
+  }).join('');
+}
+
+function avanzarCurso(id){
+  const uid=curUser();
+  const curso=CURSOS.find(c=>c.id===id);
+  if(!curso)return;
+  const prog=curso.progreso[uid]||0;
+  if(prog>=curso.modulos.length){showToast('Ya completaste este curso');return;}
+  curso.progreso[uid]=prog+1;
+  renderCursos();
+  if(curso.progreso[uid]===curso.modulos.length)showToast('Curso completado!');
+  else showToast('Modulo completado');
+}
+// BOOT
+buildLoginScreen();
+const _d=getDB();
+if(_d.currentUser){
+  document.getElementById('loginScreen').classList.remove('active');
+  document.getElementById('mainApp').classList.add('active');
+  initApp();
+}
+</script>
+</body>
+</html>
