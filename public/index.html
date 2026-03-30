@@ -281,6 +281,11 @@ textarea::placeholder{color:var(--text2)}
 .modulo-check svg{width:100%;height:100%;stroke-width:2.5;fill:none}
 .btn-curso{width:100%;padding:.75rem;background:var(--c5);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-curso:hover{background:var(--c4)}
+/* MEDALLAS */
+.medallas-float{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;margin-bottom:.5rem}
+.medalla-chip{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--c3),var(--c2));border:2px solid rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;font-size:1rem;position:relative;cursor:default}
+.medalla-chip:hover::after{content:attr(data-title);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:.6rem;padding:.2rem .5rem;border-radius:6px;white-space:nowrap;pointer-events:none;font-family:'DM Sans',sans-serif}
+.medallas-count{font-size:.7rem;color:var(--text2);margin-bottom:.75rem}
 /* TOAST */
 #toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.65rem 1.25rem;font-size:.82rem;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);max-width:300px;text-align:center;pointer-events:none;color:var(--text);box-shadow:var(--shadow)}
 #toast.show{transform:translateX(-50%) translateY(0)}
@@ -446,11 +451,23 @@ textarea::placeholder{color:var(--text2)}
 <!-- CURSOS -->
 <div id="tabCursos" style="display:none">
   <div class="sec-title">Cursos guiados</div>
-  <div id="cursosList" style="display:flex;flex-direction:column;gap:.85rem"></div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:1.5rem;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:.75rem">🎓</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-bottom:.5rem">Cursos interactivos</div>
+    <div style="font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:1.25rem">
+      Accede a cursos completos con videos, lecturas, ejercicios practicos, quiz y certificado descargable.
+    </div>
+    <div id="medallasResumen" style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem"></div>
+    <button onclick="irACursos()" style="width:100%;padding:.9rem;background:var(--c5);border:none;border-radius:14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s">
+      Ver todos los cursos
+    </button>
+  </div>
 </div>
     <!-- PERFIL -->
     <div id="tabPerfil" style="display:none">
       <div class="profile-header">
+        <div class="medallas-float" id="medallasFloat"></div>
+<div class="medallas-count" id="medallasCount"></div>
         <div class="profile-av-big" id="profileAvBig" onclick="triggerAvatarUpload()">
           <div class="av-edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
         </div>
@@ -718,7 +735,7 @@ function switchTab(tab){
   if(tab==='perfil')renderPerfil();
   if(tab==='home')renderHomeEntries();
   if(tab==='blogs')renderBlogs();
-  if(tab==='cursos')renderCursos();
+  if(tab==='cursos')renderMedallasResumen();
 }
 function goTo(tab){switchTab(tab);}
 function checkAndGo(tab,req){
@@ -949,6 +966,7 @@ function renderPerfil(){
   document.querySelectorAll('.plan-btn').forEach(b=>{
     b.classList.remove('cur');
     if((b.classList.contains('s')&&plan==='semilla')||(b.classList.contains('b')&&plan==='brote')||(b.classList.contains('r')&&plan==='raiz'))b.classList.add('cur');
+  renderMedallas();
   });
   // avatar preview
   const prev=document.getElementById('avPreview');
@@ -1010,9 +1028,9 @@ const BLOGS=[
 
 // CURSOS DATA
 const CURSOS=[
-  {id:1,titulo:'Manejo de la ansiedad',desc:'Aprende herramientas practicas y cientificamente respaldadas para reducir la ansiedad en tu vida cotidiana.',duracion:'4 semanas',modulos:['Que es la ansiedad y como funciona','Tecnicas de respiracion y relajacion','Pensamientos automaticos negativos','Construyendo rutinas de bienestar'],color:'rgba(156,175,183,.2)',iconColor:'var(--c4)',progreso:{user1:2,user2:0,psi1:4,psi2:1}},
-  {id:2,titulo:'Autoestima y amor propio',desc:'Un recorrido profundo para reconectar con tu valor personal y construir una relacion sana contigo mismo.',duracion:'3 semanas',modulos:['Origen de la autoestima','Dialogo interno y autocritica','Celebrando tus fortalezas','Limites y autocuidado'],color:'rgba(234,210,172,.3)',iconColor:'#8B6E3A',progreso:{user1:0,user2:1,psi1:4,psi2:0}},
-  {id:3,titulo:'Mindfulness para principiantes',desc:'Descubre como vivir el momento presente reduce el estres y mejora tu bienestar general.',duracion:'2 semanas',modulos:['Que es mindfulness','Respiracion consciente','Escaner corporal','Mindfulness en lo cotidiano'],color:'rgba(154,207,183,.2)',iconColor:'#2E7D5E',progreso:{user1:0,user2:3,psi1:4,psi2:2}},
+  {id:1,titulo:'Manejo de la ansiedad',medalla:'🧘',desc:'Aprende herramientas practicas y cientificamente respaldadas para reducir la ansiedad en tu vida cotidiana.',duracion:'4 semanas',modulos:['Que es la ansiedad y como funciona','Tecnicas de respiracion y relajacion','Pensamientos automaticos negativos','Construyendo rutinas de bienestar'],color:'rgba(156,175,183,.2)',iconColor:'var(--c4)',progreso:{user1:2,user2:0,psi1:4,psi2:1}},
+  {id:2,titulo:'Autoestima y amor propio',medalla:'⭐',desc:'Un recorrido profundo para reconectar con tu valor personal y construir una relacion sana contigo mismo.',duracion:'3 semanas',modulos:['Origen de la autoestima','Dialogo interno y autocritica','Celebrando tus fortalezas','Limites y autocuidado'],color:'rgba(234,210,172,.3)',iconColor:'#8B6E3A',progreso:{user1:0,user2:1,psi1:4,psi2:0}},
+  {id:3,titulo:'Mindfulness para principiantes',medalla:'🌿',desc:'Descubre como vivir el momento presente reduce el estres y mejora tu bienestar general.',duracion:'2 semanas',modulos:['Que es mindfulness','Respiracion consciente','Escaner corporal','Mindfulness en lo cotidiano'],color:'rgba(154,207,183,.2)',iconColor:'#2E7D5E',progreso:{user1:0,user2:3,psi1:4,psi2:2}},
 ];
 
 function renderBlogs(){
@@ -1076,8 +1094,141 @@ function avanzarCurso(id){
   if(prog>=curso.modulos.length){showToast('Ya completaste este curso');return;}
   curso.progreso[uid]=prog+1;
   renderCursos();
-  if(curso.progreso[uid]===curso.modulos.length)showToast('Curso completado!');
-  else showToast('Modulo completado');
+  if(curso.progreso[uid]===curso.modulos.length){
+    saveMedalla(curso.id,curso.titulo,curso.medalla);
+    mostrarFelicitacion(curso.titulo,curso.medalla);
+  } else {
+    showToast('Modulo completado');
+  }
+}
+// MEDALLAS
+function getMedallas(){
+  try{return JSON.parse(localStorage.getItem('kokomori_medallas')||'[]');}catch(e){return[];}
+}
+function saveMedalla(cursoId,titulo,medalla){
+  const medallas=getMedallas();
+  if(!medallas.find(m=>m.cursoId===cursoId)){
+    medallas.push({cursoId,titulo,medalla,fecha:new Date().toLocaleDateString('es-MX'),usuario:curUser()});
+    localStorage.setItem('kokomori_medallas',JSON.stringify(medallas));
+  }
+}
+function renderMedallas(){
+  const medallas=getMedallas().filter(m=>m.usuario===curUser());
+  const float=document.getElementById('medallasFloat');
+  const count=document.getElementById('medallasCount');
+  if(!float)return;
+  if(!medallas.length){
+    float.innerHTML='';
+    count.textContent='Completa cursos para ganar medallas';
+    return;
+  }
+  float.innerHTML=medallas.map(m=>`<div class="medalla-chip" data-title="${m.titulo}">${m.medalla}</div>`).join('');
+  count.textContent=`${medallas.length} curso${medallas.length>1?'s':''} completado${medallas.length>1?'s':''}`;
+}
+
+// CERTIFICADO PDF
+function generarCertificadoPDF(nombreUsuario, cursoTitulo){
+  const w=794,h=561;
+  const canvas=document.createElement('canvas');
+  canvas.width=w;canvas.height=h;
+  const ctx=canvas.getContext('2d');
+  // fondo
+  ctx.fillStyle='#FDF8F4';
+  ctx.fillRect(0,0,w,h);
+  // borde
+  ctx.strokeStyle='#4281A4';
+  ctx.lineWidth=4;
+  ctx.strokeRect(20,20,w-40,h-40);
+  ctx.strokeStyle='#E6B89C';
+  ctx.lineWidth=1.5;
+  ctx.strokeRect(28,28,w-56,h-56);
+  // titulo app
+  ctx.fillStyle='#4281A4';
+  ctx.font='bold 42px Georgia, serif';
+  ctx.textAlign='center';
+  ctx.fillText('Kokomori',w/2,110);
+  // subtitulo
+  ctx.fillStyle='#7A5F55';
+  ctx.font='18px Georgia, serif';
+  ctx.fillText('Certificado de Completacion',w/2,148);
+  // linea
+  ctx.strokeStyle='#EAD2AC';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(150,168);ctx.lineTo(w-150,168);ctx.stroke();
+  // texto
+  ctx.fillStyle='#2C2420';
+  ctx.font='15px DM Sans, sans-serif';
+  ctx.fillText('Este certificado se otorga a:',w/2,210);
+  // nombre
+  ctx.fillStyle='#4281A4';
+  ctx.font='bold 34px Georgia, serif';
+  ctx.fillText(nombreUsuario,w/2,258);
+  // linea nombre
+  ctx.strokeStyle='#9CAFB7';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(200,272);ctx.lineTo(w-200,272);ctx.stroke();
+  // curso
+  ctx.fillStyle='#2C2420';
+  ctx.font='15px DM Sans, sans-serif';
+  ctx.fillText('por completar exitosamente el curso:',w/2,310);
+  ctx.fillStyle='#FE938C';
+  ctx.font='bold 26px Georgia, serif';
+  ctx.fillText(cursoTitulo,w/2,348);
+  // fecha
+  ctx.fillStyle='#7A5F55';
+  ctx.font='13px DM Sans, sans-serif';
+  ctx.fillText(`Fecha: ${new Date().toLocaleDateString('es-MX')}`,w/2,400);
+  // pie
+  ctx.fillStyle='#9CAFB7';
+  ctx.font='12px DM Sans, sans-serif';
+  ctx.fillText('Tu espacio seguro de bienestar emocional',w/2,450);
+  // descarga
+  const link=document.createElement('a');
+  link.download=`certificado-kokomori-${cursoTitulo.replace(/ /g,'-')}.png`;
+  link.href=canvas.toDataURL('image/png');
+  link.click();
+}
+
+// MODAL FELICITACION
+function mostrarFelicitacion(cursoTitulo, medalla){
+  const u=curUserObj();
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  modal.innerHTML=`
+    <div style="background:var(--surface);border-radius:24px;padding:2.5rem 2rem;max-width:320px;width:90%;text-align:center;border:1px solid var(--border);box-shadow:var(--shadow)">
+      <div style="font-size:3rem;margin-bottom:.75rem">${medalla}</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--text);margin-bottom:.5rem">Felicitaciones!</div>
+      <div style="font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:1.25rem">
+        Completaste <strong style="color:var(--text)">${cursoTitulo}</strong>.<br>Tu medalla ya aparece en tu perfil.
+      </div>
+      <button onclick="generarCertificadoPDF('${u.name}','${cursoTitulo}');this.textContent='Descargado!';this.style.background='var(--c4)'"
+        style="width:100%;padding:.85rem;background:var(--c5);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;margin-bottom:.6rem">
+        Descargar certificado PDF
+      </button>
+      <button onclick="this.closest('div[style]').remove()"
+        style="width:100%;padding:.75rem;background:none;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer">
+        Cerrar
+      </button>
+    </div>`;
+  document.body.appendChild(modal);
+}
+function irACursos(){
+  if(!hasAccess('cursos')){showLock('Cursos guiados','plan Brote');return;}
+  window.location.href='/cursos';
+}
+
+function renderMedallasResumen(){
+  const medallas=getMedallas().filter(m=>m.usuario===curUser());
+  const el=document.getElementById('medallasResumen');
+  if(!el)return;
+  if(!medallas.length){
+    el.innerHTML=`<span style="font-size:.78rem;color:var(--text2)">Completa cursos para ganar medallas</span>`;
+    return;
+  }
+  el.innerHTML=medallas.map(m=>`
+    <div style="display:flex;align-items:center;gap:.4rem;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.3rem .7rem;font-size:.75rem;color:var(--text)">
+      <span>${m.medalla}</span><span>${m.titulo}</span>
+    </div>`).join('');
 }
 // BOOT
 buildLoginScreen();
