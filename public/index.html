@@ -384,8 +384,7 @@ textarea::placeholder{color:var(--text2)}
   <div class="qc-title">Calendario Emocional</div>
   <div class="qc-sub">Tu registro mes a mes</div>
 </div>
-</div>
-        <div class="quick-card" onclick="checkAndGo('chat','raiz')">
+<div class="quick-card" onclick="checkAndGo('chat','raiz')">
           <div class="qc-icon sand"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
           <div class="qc-title">Psicologos</div>
           <div class="qc-sub">Chat profesional</div>
@@ -515,8 +514,19 @@ textarea::placeholder{color:var(--text2)}
             <div class="av-preview-change" onclick="triggerAvatarUpload()">Cambiar foto</div>
           </div>
         </div>
-        <input type="file" id="avatarInput" accept="image/*" capture="environment" style="display:none" onchange="handleAvatarUpload(event)"/>
-      </div>
+       <input type="file" id="avatarInputGaleria" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)"/>
+<input type="file" id="avatarInputCamara" accept="image/*" capture="environment" style="display:none" onchange="handleAvatarUpload(event)"/>
+
+<div id="avatarMenu" style="display:none;margin-top:.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+  <button onclick="document.getElementById('avatarInputCamara').click();document.getElementById('avatarMenu').style.display='none'" style="width:100%;padding:.9rem 1rem;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.875rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:.6rem">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--c5)" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    Tomar foto con camara
+  </button>
+  <button onclick="document.getElementById('avatarInputGaleria').click();document.getElementById('avatarMenu').style.display='none'" style="width:100%;padding:.9rem 1rem;background:none;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.875rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:.6rem">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--c5)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    Elegir de galeria
+  </button>
+</div> </div>
 
       <button class="btn-danger" onclick="doLogout()">Cerrar sesion</button>
     </div>
@@ -993,7 +1003,8 @@ function changePlan(plan){
 }
 function triggerAvatarUpload(){
   if(!hasAccess('avatar')){showLock('Foto de perfil','plan Brote');return;}
-  document.getElementById('avatarInput').click();
+  const menu=document.getElementById('avatarMenu');
+  menu.style.display=menu.style.display==='none'?'block':'none';
 }
 function handleAvatarUpload(e){
   const file=e.target.files[0];if(!file)return;

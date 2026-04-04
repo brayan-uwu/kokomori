@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import emailjs from 'emailjs-com';
 import jsPDF from 'jspdf';
 
 const EMAILJS_SERVICE_ID = 'service_8qbocpl';
@@ -411,31 +410,30 @@ export default function CursosPage() {
               </>
             )}
 
-            {fase === 'certificado' && (
-              <div style={s.certBox}>
-                <div style={{ fontSize: '3rem', marginBottom: '.5rem' }}>{cursoActivo.medalla}</div>
-                <div style={{ ...s.modalTitle, fontSize: '1.3rem' }}>Felicitaciones!</div>
-                <div style={{ color: '#7A5F55', fontSize: '.88rem', marginBottom: '1.5rem', lineHeight: 1.6 }}>
-                  Completaste <strong>{cursoActivo.titulo}</strong>. Ingresa tus datos para recibir tu certificado.
-                </div>
-                {!enviado ? (
-                  <>
-                    <input style={s.input} placeholder="Tu nombre completo" value={nombre} onChange={e => setNombre(e.target.value)} />
-                    <input style={s.input} placeholder="Tu correo electronico" type="email" value={correo} onChange={e => setCorreo(e.target.value)} />
-                    <button style={{ ...s.btnPrimary, marginTop: 0 }} onClick={enviarCertificado} disabled={enviando || !nombre || !correo}>
-                      {enviando ? 'Enviando...' : 'Recibir certificado y medalla'}
-                    </button>
-                  </>
-                ) : (
-                  <div style={{ background: 'rgba(46,125,94,.08)', borderRadius: '14px', padding: '1.5rem' }}>
-                    <div style={{ fontSize: '1.5rem', marginBottom: '.5rem' }}>✓</div>
-                    <div style={{ fontWeight: 600, color: '#2E7D5E', marginBottom: '.25rem' }}>Certificado enviado</div>
-                    <div style={{ fontSize: '.82rem', color: '#7A5F55' }}>Revisa tu correo. El PDF se descargo automaticamente.</div>
-                    <button style={{ ...s.btnPrimary, marginTop: '1rem', background: '#9CAFB7' }} onClick={cerrarCurso}>Volver a cursos</button>
-                  </div>
-                )}
-              </div>
-            )}
+{fase === 'certificado' && (
+  <div style={s.certBox}>
+    <div style={{ fontSize: '3rem', marginBottom: '.5rem' }}>{cursoActivo.medalla}</div>
+    <div style={{ ...s.modalTitle, fontSize: '1.3rem' }}>Felicitaciones!</div>
+    <div style={{ color: '#7A5F55', fontSize: '.88rem', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+      Completaste <strong>{cursoActivo.titulo}</strong>.<br/>Tu medalla ya aparece en tu perfil.
+    </div>
+    {!enviado ? (
+      <>
+        <input style={s.input} placeholder="Tu nombre completo" value={nombre} onChange={e => setNombre(e.target.value)} />
+        <button style={{ ...s.btnPrimary, marginTop: 0 }} onClick={() => { guardarMedalla(); generarPDF(); setEnviado(true); }} disabled={!nombre}>
+          Descargar certificado y guardar medalla
+        </button>
+      </>
+    ) : (
+      <div style={{ background: 'rgba(46,125,94,.08)', borderRadius: '14px', padding: '1.5rem' }}>
+        <div style={{ fontSize: '1.5rem', marginBottom: '.5rem' }}>✓</div>
+        <div style={{ fontWeight: 600, color: '#2E7D5E', marginBottom: '.25rem' }}>Certificado descargado</div>
+        <div style={{ fontSize: '.82rem', color: '#7A5F55' }}>El PDF se guardo en tu dispositivo y tu medalla ya esta en el perfil.</div>
+        <button style={{ ...s.btnPrimary, marginTop: '1rem', background: '#9CAFB7' }} onClick={cerrarCurso}>Volver a cursos</button>
+      </div>
+    )}
+  </div>
+)}
           </div>
         </div>
       )}
